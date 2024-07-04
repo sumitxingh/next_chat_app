@@ -13,7 +13,7 @@ const Register: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/register`, data);
+      const response = await axios.post(`${BASE_URL}/user/auth/register`, data);
       const user = response.data.response_data.data.user;
 
       setPopupMessage("User registered successfully. Now you can log in.");

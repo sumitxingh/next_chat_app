@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
                   <FontAwesomeIcon icon={faHome} className="mr-2" />
                   Home
                 </Link>
-                <Link href="/user-profile" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                <Link href="/user/profile" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
                   <FontAwesomeIcon icon={faCircleUser} className="mr-2" />
                   profile
                 </Link>
