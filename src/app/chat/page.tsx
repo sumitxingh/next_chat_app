@@ -6,17 +6,28 @@ import ChatWindow from '../components/chat/ChatWindow';
 import ChatSidebar from '../components/chat/ChatSidebar';
 import { BASE_URL } from '@/common/constants';
 
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  profile_pic: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const Chat = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [connectedUsers, setConnectedUsers] = useState<string[]>([]); // Ensure connectedUsers is typed as string[]
   const [typingUsers, setTypingUsers] = useState<string[]>([]); // Ensure typingUsers is typed as string[]
-  const socketRef = useRef<Socket>(); // Specify the type for socketRef.current
+  const socketRef = useRef<Socket | null>(null); // Specify the type for socketRef.current
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const accessToken = Cookies.get('accessToken');
 
     if (storedUser && accessToken) {
+      setCurrentUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
       const socket = io(BASE_URL, {
         timeout: 1000,
@@ -75,12 +86,6 @@ const Chat = () => {
       <title>Chat App</title>
       <ChatSidebar connectUsers={connectedUsers} />
       <div className="w-1/4 border-r p-4">
-        {/* <h2>Connected Users</h2>
-        <ul>
-          {connectedUsers.map((user, index) => (
-            <li key={index}>{user} - <span className="text-green-500">Online</span></li>
-          ))}
-        </ul> */}
         <h3>Typing Users</h3>
         <ul>
           {typingUsers.map((user, index) => (
@@ -88,7 +93,7 @@ const Chat = () => {
           ))}
         </ul>
       </div>
-      <ChatWindow onTyping={handleTyping} />
+      <ChatWindow onTyping={handleTyping} socket={socketRef.current} currentUserName={currentUser?.username ?? ''} />
     </div>
   );
 };
