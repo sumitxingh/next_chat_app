@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes, faHome, faInfoCircle, faCogs, faEnvelope, faUser, faCircleUser } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faHome, faInfoCircle, faCogs, faEnvelope, faUser, faCircleUser, faLineChart } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-purple-700">
+    <nav className="bg-gray-800">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="relative flex items-center justify-between h-16">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               aria-controls="mobile-menu"
               aria-expanded="false"
             >
@@ -37,15 +37,19 @@ const Navbar: React.FC = () => {
             </div>
             <div className="hidden sm:block sm:ml-6">
               <div className="flex space-x-4">
-                <Link href="/" className="text-gray-300 hover:bg-purple-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                <Link href="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
                   <FontAwesomeIcon icon={faHome} className="mr-2" />
                   Home
                 </Link>
-                <Link href="/user/profile" className="text-gray-300 hover:bg-purple-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                <Link href="/chat" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                  <FontAwesomeIcon icon={faLineChart} className="mr-2" />
+                  Chat
+                </Link>
+                <Link href="/user/profile" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
                   <FontAwesomeIcon icon={faCircleUser} className="mr-2" />
                   profile
                 </Link>
-                <Link href="/user" className="text-gray-300 hover:bg-purple-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                <Link href="/user" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
                   <FontAwesomeIcon icon={faUser} className="mr-2" />
                   all users
                 </Link>
@@ -62,19 +66,19 @@ const Navbar: React.FC = () => {
       {/* Mobile menu */}
       <div className={`${isOpen ? 'block' : 'hidden'} sm:hidden`} id="mobile-menu">
         <div className="px-2 pt-2 pb-3 space-y-1">
-          <Link href="/" className="text-gray-300 hover:bg-purple-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
+          <Link href="/" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
             <FontAwesomeIcon icon={faHome} className="mr-2" />
             Home
           </Link>
-          <Link href="/about" className="text-gray-300 hover:bg-purple-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
+          <Link href="/about" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
             <FontAwesomeIcon icon={faInfoCircle} className="mr-2" />
             About
           </Link>
-          <Link href="/services" className="text-gray-300 hover:bg-purple-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
+          <Link href="/services" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
             <FontAwesomeIcon icon={faCogs} className="mr-2" />
             Services
           </Link>
-          <Link href="/contact" className="text-gray-300 hover:bg-purple-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
+          <Link href="/contact" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
             <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
             Contact
           </Link>
