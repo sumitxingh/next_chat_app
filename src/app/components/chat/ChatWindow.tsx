@@ -6,19 +6,32 @@ interface ChatWindowProps {
   onTyping: (isTyping: boolean) => void;
   socket: Socket | null; // Accept socket prop
   currentUserName: string; //
+  sendTo: string | null;
 }
 interface Message {
-  username: string;
+  from: string;
+  to: string;
   message: string;
   send_on: Date;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserName }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserName, sendTo }) => {
   const [message, setMessage] = useState('');
   const [receivedMessage, setReceivedMessage] = useState<Message[]>([]);
 
+
   useEffect(() => {
+    const handleReceiveMessage = (message: Message) => {
+      message.send_on = new Date(message.send_on);
+      setReceivedMessage((prevMessages) => [...prevMessages, message]);
+    };
     socket?.on('receive-message', (message: Message) => {
+      // convert message.send_on to Date object
+      message.send_on = new Date(message.send_on);
+      setReceivedMessage([...receivedMessage, message]);
+    })
+
+    socket?.on('receive-private-message', (message: Message) => {
       // convert message.send_on to Date object
       message.send_on = new Date(message.send_on);
       setReceivedMessage([...receivedMessage, message]);
@@ -46,22 +59,34 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
   };
 
   const handleSend = () => {
-    if (socket && message.trim() !== '') {
-      const date = new Date()
-      const sendMessage = { message, send_on: date }
-      console.log(`send message:`)
-      console.log(sendMessage);
-      socket.emit('message', sendMessage); // Emit the message via socket
+    const isValidMessage = message.trim() !== '';
+
+    if (socket && isValidMessage) {
+      if (sendTo) {
+        const date = new Date()
+        const sendMessage = { from: currentUserName, to: sendTo, message, send_on: date }
+        console.log(`send private message:`)
+        console.log(sendMessage);
+        socket.emit('private-message', sendMessage); // Emit the private message via socket
+      } else {
+        const date = new Date()
+        const sendMessage = { from: currentUserName, to: 'all', message, send_on: date }
+        console.log(`send message:`)
+        console.log(sendMessage);
+        socket.emit('message', sendMessage); // Emit the message via socket
+      }
     }
+
     setMessage('');
   };
+  console.log(receivedMessage)
 
   return (
     <div className="flex flex-col h-screen">
       <div className="flex-1 bg-gray-100 p-4 overflow-y-auto">
         <div className="flex flex-col gap-2">
           {receivedMessage.map((item: Message, index) => (
-            item.username === currentUserName ? (
+            item.from === currentUserName ? (
               <div key={index} className="bg-blue-500 text-white p-2 rounded-md max-w-xs self-end shadow-md">
                 {item.message}
                 <span className="block text-xs text-white">{item.send_on.toLocaleString()}</span>
@@ -69,7 +94,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
             ) : (
               <div key={index} className="bg-gray-200 p-2 rounded-md max-w-xs self-start shadow-md">
                 {item.message}
-                <span className="block text-xs text-gray-500">{item.username}</span>
+                {item.to !== 'all' && <span className="block text-xs text-red-400">private message</span>}
+                <span className="block text-xs text-gray-500">{item.from}</span>
                 <span className="block text-xs text-gray-500">{item.send_on.toLocaleString()}</span>
               </div>
             )

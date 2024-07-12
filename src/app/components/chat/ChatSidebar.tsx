@@ -6,6 +6,9 @@ import UserIcon from "./UserIcon";
 
 interface ChatSidebarProps {
   connectUsers: string[];
+  sendTo: string | null;
+  setSendTo: React.Dispatch<React.SetStateAction<string | null>>;
+
 }
 
 interface User {
@@ -19,9 +22,9 @@ interface User {
 
 
 
-const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers }) => {
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSendTo }) => {
   const [error, setError] = useState<string | null>(null);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  // const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
@@ -38,7 +41,10 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers }) => {
   }, []);
 
   const handleUserClick = (user: User) => {
-    setSelectedUser(user);
+    console.log(user);
+    console.log(user.username)
+    setSendTo(user.username);
+    console.log(sendTo);
   };
 
   return (
@@ -51,7 +57,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers }) => {
             key={user.id}
             user={user}
             isActive={connectUsers.includes(user.username)}
-            isSelected={selectedUser?.id === user.id}
+            isSelected={sendTo === user.username}
             onClick={() => handleUserClick(user)}
           />
         ))}

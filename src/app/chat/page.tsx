@@ -21,6 +21,7 @@ const Chat = () => {
   const [typingUsers, setTypingUsers] = useState<string[]>([]); // Ensure typingUsers is typed as string[]
   const socketRef = useRef<Socket | null>(null); // Specify the type for socketRef.current
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [sendTo, setSendTo] = useState<string | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -33,8 +34,9 @@ const Chat = () => {
         timeout: 1000,
         autoConnect: true,
         auth: {
-          token: accessToken
-        }
+          token: accessToken,
+          username: JSON.parse(storedUser).username,
+        },
       });
 
       socket.on("connect", () => {
@@ -84,16 +86,16 @@ const Chat = () => {
   return (
     <div className="h-screen flex">
       <title>Chat App</title>
-      <ChatSidebar connectUsers={connectedUsers} />
-      <div className="w-1/4 border-r p-4">
+      <ChatSidebar connectUsers={connectedUsers} sendTo={sendTo} setSendTo={setSendTo} />
+      {/* <div className="w-1/4 border-r p-4">
         <h3>Typing Users</h3>
         <ul>
           {typingUsers.map((user, index) => (
             <li key={index}>{user} is typing...</li>
           ))}
         </ul>
-      </div>
-      <ChatWindow onTyping={handleTyping} socket={socketRef.current} currentUserName={currentUser?.username ?? ''} />
+      </div> */}
+      <ChatWindow onTyping={handleTyping} socket={socketRef.current} currentUserName={currentUser?.username ?? ''} sendTo={sendTo} />
     </div>
   );
 };
