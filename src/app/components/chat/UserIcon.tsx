@@ -8,17 +8,18 @@ interface User {
   created_at: string;
   updated_at: string;
 }
+
 interface UserItemProps {
   user: User;
   isActive: boolean;
   isSelected: boolean;
   onClick: () => void;
+  notificationCount: number; // New prop for notification count
 }
 
-const UserIcon: React.FC<UserItemProps> = ({ user, isActive, isSelected, onClick }) => {
+const UserIcon: React.FC<UserItemProps> = ({ user, isActive, isSelected, onClick, notificationCount }) => {
   return (
     <li
-      key={user.id}
       className={`py-2 px-4 cursor-pointer flex items-center ${isSelected ? 'bg-gray-300' : ''}`}
       onClick={onClick}
     >
@@ -39,6 +40,11 @@ const UserIcon: React.FC<UserItemProps> = ({ user, isActive, isSelected, onClick
         )}
       </div>
       <span className="ml-2">{user.username}</span>
+      {notificationCount > 0 && (
+        <span className="ml-auto bg-red-500 text-white rounded-full px-2 text-sm">
+          {notificationCount}
+        </span>
+      )}
     </li>
   );
 };

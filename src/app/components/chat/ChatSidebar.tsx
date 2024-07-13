@@ -1,14 +1,13 @@
-"use client";
+import React, { useState, useEffect } from 'react';
 import axiosInstance from "@/common/axiosInstance";
-import { BASE_URL } from "@/common/constants";
-import { useEffect, useState } from "react";
 import UserIcon from "./UserIcon";
 
 interface ChatSidebarProps {
   connectUsers: string[];
   sendTo: string | null;
   setSendTo: React.Dispatch<React.SetStateAction<string | null>>;
-
+  notifications: { [key: string]: number }; // Add notifications prop
+  setNotifications: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>; //
 }
 
 interface User {
@@ -20,11 +19,8 @@ interface User {
   updated_at: string;
 }
 
-
-
-const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSendTo }) => {
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSendTo, notifications, setNotifications }) => {
   const [error, setError] = useState<string | null>(null);
-  // const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
@@ -41,15 +37,27 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
   }, []);
 
   const handleUserClick = (user: User) => {
-    console.log(user);
-    console.log(user.username)
     setSendTo(user.username);
-    console.log(sendTo);
+    const { } = notifications
+    setNotifications(prevNotifications => ({
+      ...prevNotifications,
+      [user.username]: 0, // Set notification count to zero
+    }));
+  };
+
+  const handlePublicChatClick = () => {
+    setSendTo(null); // Set to null for public chat
   };
 
   return (
     <div className="h-screen w-64 bg-gray-200 p-4 overflow-y-auto">
       <h2 className="text-lg font-bold mb-4">Users</h2>
+      <button
+        onClick={handlePublicChatClick}
+        className={`w-full text-center py-2 bg-blue-500 text-white rounded-md mb-4`}
+      >
+        Public Chat
+      </button>
       {error && <p className="text-red-500">{error}</p>}
       <ul>
         {users.map((user) => (
@@ -59,6 +67,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
             isActive={connectUsers.includes(user.username)}
             isSelected={sendTo === user.username}
             onClick={() => handleUserClick(user)}
+            notificationCount={notifications[user.username] || 0} // Pass notification count
           />
         ))}
       </ul>

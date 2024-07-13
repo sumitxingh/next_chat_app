@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import Cookies from 'js-cookie';
-import { io, Socket } from 'socket.io-client'; // Import Socket type from socket.io-client
+import { io, Socket } from 'socket.io-client';
 import ChatWindow from '../components/chat/ChatWindow';
 import ChatSidebar from '../components/chat/ChatSidebar';
 import { BASE_URL } from '@/common/constants';
@@ -17,9 +17,10 @@ interface User {
 
 const Chat = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [connectedUsers, setConnectedUsers] = useState<string[]>([]); // Ensure connectedUsers is typed as string[]
-  const [typingUsers, setTypingUsers] = useState<string[]>([]); // Ensure typingUsers is typed as string[]
-  const socketRef = useRef<Socket | null>(null); // Specify the type for socketRef.current
+  const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const [notifications, setNotifications] = useState<{ [key: string]: number }>({});
+  const socketRef = useRef<Socket | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [sendTo, setSendTo] = useState<string | null>(null);
 
@@ -43,11 +44,11 @@ const Chat = () => {
         console.log("connected");
       });
 
-      socket.on('users', (users: string[]) => { // Ensure users is typed as string[]
+      socket.on('users', (users: string[]) => {
         setConnectedUsers(users);
       });
 
-      socket.on('typing', ({ username, isTyping }: { username: string, isTyping: boolean }) => { // Ensure username is typed as string and isTyping as boolean
+      socket.on('typing', ({ username, isTyping }: { username: string, isTyping: boolean }) => {
         setTypingUsers(prevTypingUsers => {
           if (isTyping && !prevTypingUsers.includes(username)) {
             return [...prevTypingUsers, username];
@@ -63,6 +64,21 @@ const Chat = () => {
         alert('Session expired. Please log in again.');
       });
 
+      socket.on('receive-private-message', (message: { from: string; to: string; content: string; send_on: Date }) => {
+        if (sendTo !== message.from) {
+          setNotifications(prev => ({
+            ...prev,
+            [message.from]: (prev[message.from] || 0) + 1, // Increment notification count
+          }));
+        }
+        // Play notification sound
+        const audio = new Audio('/sound/sms-tone.mp3'); // Adjust the path according to your structure
+        audio.play().catch(error => {
+          console.error('Error playing audio:', error);
+        });
+
+      });
+
       socketRef.current = socket;
 
       return () => {
@@ -71,7 +87,7 @@ const Chat = () => {
     } else {
       setIsAuthenticated(false);
     }
-  }, []);
+  }, [sendTo]);
 
   const handleTyping = (isTyping: boolean) => {
     if (socketRef.current) {
@@ -86,16 +102,19 @@ const Chat = () => {
   return (
     <div className="h-screen flex">
       <title>Chat App</title>
-      <ChatSidebar connectUsers={connectedUsers} sendTo={sendTo} setSendTo={setSendTo} />
-      {/* <div className="w-1/4 border-r p-4">
-        <h3>Typing Users</h3>
-        <ul>
-          {typingUsers.map((user, index) => (
-            <li key={index}>{user} is typing...</li>
-          ))}
-        </ul>
-      </div> */}
-      <ChatWindow onTyping={handleTyping} socket={socketRef.current} currentUserName={currentUser?.username ?? ''} sendTo={sendTo} />
+      <ChatSidebar
+        connectUsers={connectedUsers}
+        sendTo={sendTo}
+        setSendTo={setSendTo}
+        notifications={notifications}
+        setNotifications={setNotifications}
+      />
+      <ChatWindow
+        onTyping={handleTyping}
+        socket={socketRef.current}
+        currentUserName={currentUser?.username ?? ''}
+        sendTo={sendTo}
+      />
     </div>
   );
 };

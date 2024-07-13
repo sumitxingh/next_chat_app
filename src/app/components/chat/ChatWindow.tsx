@@ -17,25 +17,18 @@ interface Message {
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserName, sendTo }) => {
   const [message, setMessage] = useState('');
-  const [receivedMessage, setReceivedMessage] = useState<Message[]>([]);
-
+  const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const handleReceiveMessage = (message: Message) => {
       message.send_on = new Date(message.send_on);
-      setReceivedMessage((prevMessages) => [...prevMessages, message]);
-    };
-    socket?.on('receive-message', (message: Message) => {
-      // convert message.send_on to Date object
-      message.send_on = new Date(message.send_on);
-      setReceivedMessage([...receivedMessage, message]);
-    })
+      setReceivedMessages((prevMessages) => [...prevMessages, message]);
 
-    socket?.on('receive-private-message', (message: Message) => {
-      // convert message.send_on to Date object
-      message.send_on = new Date(message.send_on);
-      setReceivedMessage([...receivedMessage, message]);
-    })
+
+    };
+
+    socket?.on('receive-message', handleReceiveMessage);
+    socket?.on('receive-private-message', handleReceiveMessage);
 
     const handleKeyDown = () => {
       onTyping(true);
@@ -51,8 +44,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      socket?.off('receive-message', handleReceiveMessage);
+      socket?.off('receive-private-message', handleReceiveMessage);
     };
-  }, [onTyping]);
+  }, [onTyping, socket]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -62,30 +57,38 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
     const isValidMessage = message.trim() !== '';
 
     if (socket && isValidMessage) {
+      const date = new Date();
+      const sendMessage = { from: currentUserName, to: sendTo ?? 'all', message, send_on: date };
+
       if (sendTo) {
-        const date = new Date()
-        const sendMessage = { from: currentUserName, to: sendTo, message, send_on: date }
-        console.log(`send private message:`)
-        console.log(sendMessage);
+        console.log(`send private message:`, sendMessage);
         socket.emit('private-message', sendMessage); // Emit the private message via socket
       } else {
-        const date = new Date()
-        const sendMessage = { from: currentUserName, to: 'all', message, send_on: date }
-        console.log(`send message:`)
-        console.log(sendMessage);
+        console.log(`send message:`, sendMessage);
         socket.emit('message', sendMessage); // Emit the message via socket
       }
     }
 
     setMessage('');
   };
-  console.log(receivedMessage)
+
+  // Filter messages to show only those between currentUserName and sendTo
+  const filteredMessages = receivedMessages.filter(
+    (msg) =>
+      (msg.from === currentUserName && msg.to === sendTo) ||
+      (msg.from === sendTo && msg.to === currentUserName) ||
+      (!sendTo && msg.to === 'all')
+  );
 
   return (
     <div className="flex flex-col h-screen">
+      {/* Header for the selected user */}
+      <div className="bg-gray-300 p-4 text-lg font-bold">
+        {sendTo ? `Chat with ${sendTo}` : 'Public Chat'}
+      </div>
       <div className="flex-1 bg-gray-100 p-4 overflow-y-auto">
         <div className="flex flex-col gap-2">
-          {receivedMessage.map((item: Message, index) => (
+          {filteredMessages.map((item: Message, index) => (
             item.from === currentUserName ? (
               <div key={index} className="bg-blue-500 text-white p-2 rounded-md max-w-xs self-end shadow-md">
                 {item.message}
