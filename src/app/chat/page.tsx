@@ -70,12 +70,12 @@ const Chat = () => {
             ...prev,
             [message.from]: (prev[message.from] || 0) + 1, // Increment notification count
           }));
+          // Play notification sound
+          const audio = new Audio('/sound/sms-tone.mp3'); // Adjust the path according to your structure
+          audio.play().catch(error => {
+            console.error('Error playing audio:', error);
+          });
         }
-        // Play notification sound
-        const audio = new Audio('/sound/sms-tone.mp3'); // Adjust the path according to your structure
-        audio.play().catch(error => {
-          console.error('Error playing audio:', error);
-        });
 
       });
 

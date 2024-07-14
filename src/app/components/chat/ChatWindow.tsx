@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import axiosInstance from '@/common/axiosInstance';
+import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 
 // Define prop types for ChatWindow component
 interface ChatWindowProps {
   onTyping: (isTyping: boolean) => void;
   socket: Socket | null; // Accept socket prop
-  currentUserName: string; //
+  currentUserName: string;
   sendTo: string | null;
 }
+
 interface Message {
   from: string;
   to: string;
@@ -18,58 +20,59 @@ interface Message {
 const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserName, sendTo }) => {
   const [message, setMessage] = useState('');
   const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const chatEndRef = useRef<HTMLDivElement | null>(null); // Ref for auto-scrolling
+
+  // Effect to fetch messages when component mounts or sendTo changes
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axiosInstance.get(`/user/messages`);
+        setReceivedMessages(response.data.response_data.data);
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
+
+    fetchMessages();
+  }, [sendTo]); // Only re-fetch messages if sendTo changes
 
   useEffect(() => {
     const handleReceiveMessage = (message: Message) => {
       message.send_on = new Date(message.send_on);
       setReceivedMessages((prevMessages) => [...prevMessages, message]);
-
-
     };
 
     socket?.on('receive-message', handleReceiveMessage);
     socket?.on('receive-private-message', handleReceiveMessage);
 
-    const handleKeyDown = () => {
-      onTyping(true);
-    };
-
-    const handleKeyUp = () => {
-      onTyping(false);
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
       socket?.off('receive-message', handleReceiveMessage);
       socket?.off('receive-private-message', handleReceiveMessage);
     };
-  }, [onTyping, socket]);
+  }, [socket]);
+
+  useEffect(() => {
+    // Scroll to the bottom of the chat when new messages are received
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [receivedMessages]); // Run when receivedMessages changes
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
 
   const handleSend = () => {
-    const isValidMessage = message.trim() !== '';
+    const trimmedMessage = message.trim();
 
-    if (socket && isValidMessage) {
+    if (socket && trimmedMessage) {
       const date = new Date();
-      const sendMessage = { from: currentUserName, to: sendTo ?? 'all', message, send_on: date };
+      const sendMessage: Message = { from: currentUserName, to: sendTo ?? 'all', message: trimmedMessage, send_on: date };
 
-      if (sendTo) {
-        console.log(`send private message:`, sendMessage);
-        socket.emit('private-message', sendMessage); // Emit the private message via socket
-      } else {
-        console.log(`send message:`, sendMessage);
-        socket.emit('message', sendMessage); // Emit the message via socket
-      }
+      socket.emit(sendTo ? 'private-message' : 'message', sendMessage);
+      setMessage('');
     }
-
-    setMessage('');
   };
 
   // Filter messages to show only those between currentUserName and sendTo
@@ -82,7 +85,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Header for the selected user */}
       <div className="bg-gray-300 p-4 text-lg font-bold">
         {sendTo ? `Chat with ${sendTo}` : 'Public Chat'}
       </div>
@@ -92,17 +94,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
             item.from === currentUserName ? (
               <div key={index} className="bg-blue-500 text-white p-2 rounded-md max-w-xs self-end shadow-md">
                 {item.message}
-                <span className="block text-xs text-white">{item.send_on.toLocaleString()}</span>
+                <span className="block text-xs text-white">{new Date(item.send_on).toLocaleString()}</span>
               </div>
             ) : (
               <div key={index} className="bg-gray-200 p-2 rounded-md max-w-xs self-start shadow-md">
                 {item.message}
-                {item.to !== 'all' && <span className="block text-xs text-red-400">private message</span>}
                 <span className="block text-xs text-gray-500">{item.from}</span>
-                <span className="block text-xs text-gray-500">{item.send_on.toLocaleString()}</span>
+                <span className="block text-xs text-gray-500">{new Date(item.send_on).toLocaleString()}</span>
               </div>
             )
           ))}
+          <div ref={chatEndRef} /> {/* This div is used for scrolling */}
         </div>
       </div>
       <div className="p-4 bg-gray-200 flex">
