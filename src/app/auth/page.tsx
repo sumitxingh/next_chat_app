@@ -28,7 +28,7 @@ const AuthPage: React.FC = () => {
           <div className="mt-4 text-sm text-center text-gray-600">
             {isLogin ? (
               <>
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <button
                   className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none"
                   onClick={toggleForm}
