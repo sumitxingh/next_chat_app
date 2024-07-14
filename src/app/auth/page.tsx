@@ -15,7 +15,7 @@ const AuthPage: React.FC = () => {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      router.push("/user-profile");
+      router.push("/user/profile");
     }
   }, [router]);
 

@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import LoadingScreen from "../components/loading/LoadingScreen";
+import LoadingScreen from "../../components/loading/LoadingScreen";
 import { BASE_URL } from "@/common/constants";
 import Cookies from 'js-cookie';
 
@@ -45,7 +45,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+      <div className="bg-slate-50 hover:bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
         <div className="flex flex-col items-center mb-4">
           {user.profile_pic ? (
             <img
@@ -68,6 +68,12 @@ const Home: React.FC = () => {
           <p><strong>Created At:</strong> {new Date(user.created_at).toLocaleString()}</p>
           {/* <p><strong>Updated At:</strong> {new Date(user.updated_at).toLocaleString()}</p> */}
         </div>
+        <button
+          onClick={() => router.push("/user/profile-update")}
+          className="mt-6 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Profile Update
+        </button>
         <button
           onClick={handleSignOut}
           className="mt-6 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

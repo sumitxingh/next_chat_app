@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes, faHome, faInfoCircle, faCogs, faEnvelope, faUser, faCircleUser } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faHome, faInfoCircle, faCogs, faEnvelope, faUser, faCircleUser, faLineChart } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +41,11 @@ const Navbar: React.FC = () => {
                   <FontAwesomeIcon icon={faHome} className="mr-2" />
                   Home
                 </Link>
-                <Link href="/user-profile" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                <Link href="/chat" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                  <FontAwesomeIcon icon={faLineChart} className="mr-2" />
+                  Chat
+                </Link>
+                <Link href="/user/profile" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center">
                   <FontAwesomeIcon icon={faCircleUser} className="mr-2" />
                   profile
                 </Link>

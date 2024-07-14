@@ -16,7 +16,7 @@ const Login: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/login`, data);
+      const response = await axios.post(`${BASE_URL}/user/auth/login`, data);
       const { access_token, refresh_token } = response.data.response_data.data.tokens;
       const user = response.data.response_data.data.user;
       Cookies.set("accessToken", access_token);
@@ -24,7 +24,7 @@ const Login: React.FC = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       console.log("Login successful!");
-      router.push("/user-profile");
+      router.push("/user/profile");
     } catch (error: any) {
       console.error("Login failed:", error);
       if (error.response && error.response.data) {

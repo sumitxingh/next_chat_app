@@ -1,49 +1,73 @@
-"use client";
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import axiosInstance from "@/common/axiosInstance";
+import UserIcon from "./UserIcon";
+
+interface ChatSidebarProps {
+  connectUsers: string[];
+  sendTo: string | null;
+  setSendTo: React.Dispatch<React.SetStateAction<string | null>>;
+  notifications: { [key: string]: number }; // Add notifications prop
+  setNotifications: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>; //
+}
 
 interface User {
   id: number;
-  name: string;
-  avatar: string;
+  username: string;
+  email: string;
+  profile_pic: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
-const users: User[] = [
-  { id: 1, name: 'John Doe', avatar: 'https://example.com/johndoe.jpg' },
-  { id: 2, name: 'Jane Doe', avatar: 'https://example.com/janedoe.jpg' },
-  { id: 3, name: 'Bob Smith', avatar: 'https://example.com/bobsmith.jpg' },
-  //...
-];
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSendTo, notifications, setNotifications }) => {
+  const [error, setError] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
 
-const UserItem = ({ user, isSelected, onClick }: { user: User; isSelected: boolean; onClick: () => void }) => {
-  return (
-    <li
-      key={user.id}
-      className={`py-2 px-4 cursor-pointer flex items-center ${isSelected ? 'bg-gray-300' : ''}`}
-      onClick={onClick}
-    >
-      <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full mr-2" />
-      <span>{user.name}</span>
-    </li>
-  );
-};
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axiosInstance.get(`/user/all`);
+        setUsers(response.data.response_data.data);
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
 
-const ChatSidebar = () => {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    fetchUsers();
+  }, []);
 
   const handleUserClick = (user: User) => {
-    setSelectedUser(user);
+    setSendTo(user.username);
+    const { } = notifications
+    setNotifications(prevNotifications => ({
+      ...prevNotifications,
+      [user.username]: 0, // Set notification count to zero
+    }));
+  };
+
+  const handlePublicChatClick = () => {
+    setSendTo(null); // Set to null for public chat
   };
 
   return (
     <div className="h-screen w-64 bg-gray-200 p-4 overflow-y-auto">
       <h2 className="text-lg font-bold mb-4">Users</h2>
+      <button
+        onClick={handlePublicChatClick}
+        className={`w-full text-center py-2 bg-blue-500 text-white rounded-md mb-4`}
+      >
+        Public Chat
+      </button>
+      {error && <p className="text-red-500">{error}</p>}
       <ul>
         {users.map((user) => (
-          <UserItem
+          <UserIcon
             key={user.id}
             user={user}
-            isSelected={selectedUser?.id === user.id}
+            isActive={connectUsers.includes(user.username)}
+            isSelected={sendTo === user.username}
             onClick={() => handleUserClick(user)}
+            notificationCount={notifications[user.username] || 0} // Pass notification count
           />
         ))}
       </ul>

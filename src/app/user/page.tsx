@@ -14,7 +14,7 @@ const User: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get(`/users/all`);
+        const response = await axiosInstance.get(`/user/all`);
         setUsers(response.data.response_data.data);
       } catch (error: any) {
         setError(error.message);
