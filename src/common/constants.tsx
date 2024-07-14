@@ -1,1 +1,1 @@
-export const BASE_URL = process.env.BASE_URL ?? 'https://1xg9sq45-4500.inc1.devtunnels.ms'
+export const BASE_URL = 'https://nest-chat-app.onrender.com'
