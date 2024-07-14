@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
           <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex-shrink-0">
               <Link href="/" className="text-white text-xl font-bold">
-                MyApp
+                Chat App
               </Link>
             </div>
             <div className="hidden sm:block sm:ml-6">
@@ -70,17 +70,17 @@ const Navbar: React.FC = () => {
             <FontAwesomeIcon icon={faHome} className="mr-2" />
             Home
           </Link>
-          <Link href="/about" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
+          <Link href="/chat" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
             <FontAwesomeIcon icon={faInfoCircle} className="mr-2" />
-            About
+            Chat
           </Link>
-          <Link href="/services" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
+          <Link href="/user/profile" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
             <FontAwesomeIcon icon={faCogs} className="mr-2" />
-            Services
+            profile
           </Link>
-          <Link href="/contact" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
-            <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
-            Contact
+          <Link href="/user" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center">
+            <FontAwesomeIcon icon={faUser} className="mr-2" />
+            all users
           </Link>
         </div>
       </div>
