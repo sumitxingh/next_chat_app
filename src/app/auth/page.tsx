@@ -38,7 +38,7 @@ const AuthPage: React.FC = () => {
               </>
             ) : (
               <>
-                Already have an account?{' '}
+                Already have an account?
                 <button
                   className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none"
                   onClick={toggleForm}
