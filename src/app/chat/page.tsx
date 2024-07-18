@@ -65,18 +65,18 @@ const Chat = () => {
       });
 
       socket.on('receive-private-message', (message: { from: string; to: string; content: string; send_on: Date }) => {
-        if (sendTo !== message.from) {
+        if (currentUser && currentUser.username === message.to) {
           setNotifications(prev => ({
             ...prev,
             [message.from]: (prev[message.from] || 0) + 1, // Increment notification count
           }));
+
           // Play notification sound
           const audio = new Audio('/sound/sms-tone.mp3'); // Adjust the path according to your structure
           audio.play().catch(error => {
             console.error('Error playing audio:', error);
           });
         }
-
       });
 
       socketRef.current = socket;
