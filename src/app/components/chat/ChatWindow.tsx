@@ -21,7 +21,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
   const [message, setMessage] = useState('');
   const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const chatEndRef = useRef<HTMLDivElement | null>(null); // Ref for auto-scrolling
+  const chatMessagesRef = useRef<HTMLDivElement | null>(null); // Ref for chat message container
 
   // Effect to fetch messages when component mounts or sendTo changes
   useEffect(() => {
@@ -54,8 +54,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
 
   useEffect(() => {
     // Scroll to the bottom of the chat when new messages are received
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (chatMessagesRef.current) {
+      chatMessagesRef.current.scrollTo({
+        behavior: 'smooth',
+        top: chatMessagesRef.current.scrollHeight
+      });
     }
   }, [receivedMessages]); // Run when receivedMessages changes
 
@@ -88,11 +91,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
       <div className="bg-gray-300 p-4 text-lg font-bold">
         {sendTo ? `Chat with ${sendTo}` : 'Public Chat'}
       </div>
-      <div className="flex-1 bg-gray-100 p-4 overflow-y-auto">
+      <div className="flex-1 bg-gray-100 p-4 overflow-y-auto" ref={chatMessagesRef}>
         <div className="flex flex-col gap-2">
           {filteredMessages.map((item: Message, index) => (
             item.from === currentUserName ? (
-              <div key={index} className="bg-blue-500 text-white p-2 rounded-md max-w-xs self-end shadow-md">
+              <div key={index} className="bg-indigo-500 text-white p-2 rounded-md max-w-xs self-end shadow-md">
                 {item.message}
                 <span className="block text-xs text-white">{new Date(item.send_on).toLocaleString()}</span>
               </div>
@@ -104,19 +107,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
               </div>
             )
           ))}
-          <div ref={chatEndRef} /> {/* This div is used for scrolling */}
         </div>
       </div>
       <div className="p-4 bg-gray-200 flex">
         <input
           type="text"
-          className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
           placeholder="Type your message..."
           value={message}
           onChange={handleChange}
         />
         <button
-          className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="ml-2 px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           onClick={handleSend}
         >
           Send

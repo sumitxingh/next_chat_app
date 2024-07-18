@@ -64,13 +64,14 @@ const Home: React.FC = () => {
         <div className="text-left space-y-2">
           {/* <p><strong>ID:</strong> {user.id}</p> */}
           {/* <p><strong>Unique ID:</strong> {user.unique_id}</p> */}
-          <p><strong>Is Active:</strong> {user.is_active ? "Yes" : "No"}</p>
-          <p><strong>Created At:</strong> {new Date(user.created_at).toLocaleString()}</p>
+          {/* <p><strong>Is Active
+          :</strong> {user.is_active ? "Yes" : "No"}</p> */}
+          <p><strong>join from:</strong> {new Date(user.created_at).toLocaleString()}</p>
           {/* <p><strong>Updated At:</strong> {new Date(user.updated_at).toLocaleString()}</p> */}
         </div>
         <button
           onClick={() => router.push("/user/profile-update")}
-          className="mt-6 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="mt-6 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Profile Update
         </button>
