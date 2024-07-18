@@ -54,7 +54,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
       <h2 className="text-lg font-bold mb-4">Users</h2>
       <button
         onClick={handlePublicChatClick}
-        className={`w-full text-center py-2 bg-blue-500 text-white rounded-md mb-4`}
+        className={`w-full text-center py-2 bg-indigo-500 text-white rounded-md mb-4`}
       >
         Public Chat
       </button>

@@ -37,10 +37,6 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
           <p className="text-gray-600">{user.email}</p>
         </div>
       </div>
-      <div className="text-gray-500">
-        <p>created at: <span className="text-gray-700">{new Date(user.created_at).toLocaleString()}</span></p>
-        {/* <p>Updated At: <span className="text-gray-700">{new Date(user.updated_at).toLocaleString()}</span></p> */}
-      </div>
     </div>
   );
 };
