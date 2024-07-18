@@ -34,7 +34,7 @@ const Home: React.FC = () => {
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white">Welcome to Chat App</h1>
           <p className="mt-4 text-lg text-gray-300">
-            "Connecting people is not just a matter of technology, it's about creating moments that matter."
+            &quot;Connecting people is not just a matter of technology, it&apos;s about creating moments that matter.&quot;
           </p>
         </div>
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
