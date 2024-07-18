@@ -50,7 +50,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
   };
 
   return (
-    <div className="h-screen w-64 bg-gray-200 p-4 overflow-y-auto">
+    <div className="h-screen w-64 bg-slate-200 p-4 ">
       <h2 className="text-lg font-bold mb-4">Users</h2>
       <button
         onClick={handlePublicChatClick}

@@ -87,11 +87,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
   );
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="bg-gray-300 p-4 text-lg font-bold">
+    <div className="flex flex-col h-screen w-screen">
+      <div className="bg-indigo-300 p-4 text-lg font-bold">
         {sendTo ? `Chat with ${sendTo}` : 'Public Chat'}
       </div>
-      <div className="flex-1 bg-gray-100 p-4 overflow-y-auto" ref={chatMessagesRef}>
+      <div className="flex-1 bg-slate-100 p-4 overflow-y-auto" ref={chatMessagesRef}>
         <div className="flex flex-col gap-2">
           {filteredMessages.map((item: Message, index) => (
             item.from === currentUserName ? (
