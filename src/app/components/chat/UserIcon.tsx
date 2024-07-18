@@ -20,9 +20,14 @@ interface UserItemProps {
 const UserIcon: React.FC<UserItemProps> = ({ user, isActive, isSelected, onClick, notificationCount }) => {
   return (
     <li
-      className={`py-2 px-4 cursor-pointer flex items-center ${isSelected ? 'bg-gray-300' : ''}`}
+      className={`py-2 px-4 cursor-pointer flex items-center md:flex-row flex-col ${isSelected ? 'bg-gray-300' : ''}`}
       onClick={onClick}
     >
+      {34 > 0 && (
+        <span className="ml-auto md:order-1 bg-red-500 text-white rounded-full py-1 px-2 text-sm">
+          {34}
+        </span>
+      )}
       <div className="relative">
         {user.profile_pic ? (
           <img
@@ -40,11 +45,6 @@ const UserIcon: React.FC<UserItemProps> = ({ user, isActive, isSelected, onClick
         )}
       </div>
       <span className="ml-2">{user.username}</span>
-      {notificationCount > 0 && (
-        <span className="ml-auto bg-red-500 text-white rounded-full px-2 text-sm">
-          {notificationCount}
-        </span>
-      )}
     </li>
   );
 };
