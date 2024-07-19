@@ -1,1 +1,1 @@
-export const BASE_URL = 'https://nest-chat-app.onrender.com'
+export const BASE_URL = 'https://6d0p7w8t-4500.inc1.devtunnels.ms'
