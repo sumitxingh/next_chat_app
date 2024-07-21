@@ -51,7 +51,7 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ socket, currentUser, params }
 
   const fetchGroupDetails = async (groupId: string) => {
     try {
-      const response = await axiosInstance.get(`/user/operation/chat/group-detail/${groupId}`);
+      const response = await axiosInstance.get(`/user/operation/group-detail/${groupId}`);
       const groupData = response.data.response_data.data.group;
       const usersData = response.data.response_data.data.users;
 
@@ -118,7 +118,7 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ socket, currentUser, params }
 
   const handleAddUser = async (userId: string) => {
     try {
-      await axiosInstance.post(`/user/operation/chat/add-user-to-group`, { groupId: groupId, userId });
+      await axiosInstance.post(`/user/operation/add-user-to-group`, { groupId: groupId, userId });
       setPopupMessage('User added successfully.');
       setPopupType('success');
       setGroupUsers([...groupUsers, users.find(user => user.unique_id === userId)!]);
@@ -129,7 +129,7 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ socket, currentUser, params }
 
   const handleRemoveUser = async (userId: string) => {
     try {
-      await axiosInstance.post(`/user/operation/chat/remove-user-from-group`, { groupId: groupId, userId });
+      await axiosInstance.post(`/user/operation/remove-user-from-group`, { groupId: groupId, userId });
       setPopupMessage('User removed successfully.');
       setPopupType('success');
       setGroupUsers(groupUsers.filter(user => user.unique_id !== userId));
