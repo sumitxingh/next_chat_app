@@ -1,79 +1,69 @@
-'use client'
-import { useEffect, useRef, useState } from "react";
-import CreateGroup from "../components/group/CreateGroup";
-import { io, Socket } from "socket.io-client";
-import Cookies from 'js-cookie';
-import { BASE_URL } from "@/common/constants";
+'use client';
+import { useState, useEffect } from 'react';
+import axiosInstance from '@/common/axiosInstance';
+import { BASE_URL } from '@/common/constants';
+import Link from 'next/link';
+import { getGroupInitials } from '@/common/utils';
 
-interface User {
+interface Group {
   id: number;
   unique_id: string;
-  username: string;
-  email: string;
-  profile_pic: string | null;
+  name: string;
+  description: string;
+  group_pic: string | null;
+  conversation_id: string;
   created_at: string;
-  updated_at: string;
+  created_by: string;
+  participants_count: number;
 }
 
-const Group = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const socketRef = useRef<Socket | null>(null);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [sendTo, setSendTo] = useState<string | null>(null);
+const GroupList: React.FC = () => {
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const accessToken = Cookies.get('accessToken');
-
-    if (storedUser && accessToken) {
-      setCurrentUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-      const socket = io(BASE_URL, {
-        timeout: 1000,
-        autoConnect: true,
-        auth: {
-          token: accessToken,
-          username: JSON.parse(storedUser).username,
-        },
-      });
-
-      socket.on("connect", () => {
-        console.log("connected");
-      });
-
-      socket.on('token-expired', () => {
-        setIsAuthenticated(false);
-        alert('Session expired. Please log in again.');
-      });
-
-      socketRef.current = socket;
-
-      return () => {
-        socket.disconnect();
-      };
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, [sendTo]);
-
-  const handleTyping = (isTyping: boolean) => {
-    if (socketRef.current) {
-      socketRef.current.emit('typing', isTyping);
+  const fetchGroups = async () => {
+    try {
+      const response = await axiosInstance.get('/user/operation/chat/my-groups');
+      setGroups(response.data.response_data.data);
+    } catch (err: any) {
+      setError('Failed to fetch groups.');
     }
   };
 
-  if (!isAuthenticated) {
-    return <h1>Please Login</h1>;
-  }
+  useEffect(() => {
+    fetchGroups();
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white max-w-md w-full rounded-lg shadow-lg overflow-hidden md:max-w-xl">
-        <div className="px-6 py-8">
-          <CreateGroup socket={socketRef.current} currentUser={currentUser} />
+    <div className="max-w-4xl mx-auto mt-10 px-4">
+      <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-6">My Groups</h2>
+      {error && (
+        <div className="fixed top-5 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded shadow-lg bg-red-100 border border-red-400 text-red-700" role="alert">
+          {error}
         </div>
+      )}
+      <div className="space-y-4">
+        {groups.map(group => (
+          <Link key={group.unique_id} href={`/group/update/${group.unique_id}`}>
+            <div className="p-4 border border-gray-300 rounded-md shadow-sm hover:shadow-md transition-shadow duration-200 ease-in-out bg-white mb-4">
+              <div className="flex items-center space-x-4">
+                {group.group_pic ? (
+                  <img src={`${BASE_URL}/images/${group.group_pic}`} alt={group.name} className="h-16 w-16 rounded-full object-cover" />
+                ) : (
+                  <div className="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xs">{getGroupInitials(group.name)}</div>
+                )}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{group.name}</h3>
+                  <p className="text-sm text-gray-600">{group.description}</p>
+                  <p className="text-sm text-gray-500">Members: {group.participants_count}</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Group;
+export default GroupList;

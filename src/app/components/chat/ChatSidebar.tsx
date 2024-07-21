@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from "@/common/axiosInstance";
 import UserIcon from "./UserIcon";
 import { BASE_URL } from '@/common/constants';
+import { getGroupInitials } from '@/common/utils';
 
 interface ChatSidebarProps {
   connectUsers: string[];
@@ -78,12 +79,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
     setSendTo(null);
   };
 
-  const getGroupInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase())
-      .join('');
-  };
 
   return (
     <div className="h-screen w-64 bg-slate-200 p-4">
