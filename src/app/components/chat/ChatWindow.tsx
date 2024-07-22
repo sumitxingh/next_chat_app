@@ -39,16 +39,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
 
   useEffect(() => {
     const handleReceiveMessage = (message: Message) => {
+      console.log(`Received Message`)
+      console.log(message)
       message.send_on = new Date(message.send_on);
       setReceivedMessages((prevMessages) => [...prevMessages, message]);
     };
 
     socket?.on('receive-message', handleReceiveMessage);
     socket?.on('receive-private-message', handleReceiveMessage);
+    socket?.on('receive-group-message', handleReceiveMessage);
 
     return () => {
       socket?.off('receive-message', handleReceiveMessage);
       socket?.off('receive-private-message', handleReceiveMessage);
+      socket?.off('receive-group-message', handleReceiveMessage);
     };
   }, [socket]);
 
@@ -66,14 +70,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
     setMessage(e.target.value);
   };
 
+  const chatWith = sendTo?.startsWith('group-') ? sendTo.substring(6).split('+')[0] : sendTo;
+  const sendMessageTo = sendTo?.startsWith('group-') ? sendTo.substring(6).split('+')[1] : sendTo;
+
   const handleSend = () => {
     const trimmedMessage = message.trim();
 
     if (socket && trimmedMessage) {
       const date = new Date();
       const sendMessage: Message = { from: currentUserName, to: sendTo ?? 'all', message: trimmedMessage, send_on: date };
-
-      socket.emit(sendTo ? 'private-message' : 'message', sendMessage);
+      if (sendTo?.startsWith('group-')) {
+        console.log(`send message to group ${sendMessageTo}`)
+        // Send message to group
+        socket.emit('group-message', { from: currentUserName, to: sendMessageTo, message: trimmedMessage, send_on: date });
+      } else {
+        socket.emit(sendTo ? 'private-message' : 'message', sendMessage);
+      }
       setMessage('');
     }
   };
@@ -82,14 +94,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
   const filteredMessages = receivedMessages.filter(
     (msg) =>
       (msg.from === currentUserName && msg.to === sendTo) ||
-      (msg.from === sendTo && msg.to === currentUserName) ||
+      (msg.from === sendTo && msg.to === currentUserName) || (sendMessageTo === msg.to) ||
       (!sendTo && msg.to === 'all')
   );
+
 
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="bg-indigo-300 p-4 text-lg font-bold">
-        {sendTo ? `Chat with ${sendTo}` : 'Public Chat'}
+        {sendTo ? `Chat with ${chatWith}` : 'Public Chat'}
       </div>
       <div className="flex-1 bg-slate-100 p-4 overflow-y-auto" ref={chatMessagesRef}>
         <div className="flex flex-col gap-2">

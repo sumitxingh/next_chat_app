@@ -23,6 +23,7 @@ interface User {
 
 interface Group {
   id: number;
+  unique_id: string;
   name: string;
   group_pic: string | null;
   description: string | null;
@@ -68,7 +69,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
   };
 
   const handleGroupClick = (group: Group) => {
-    setSendTo(group.name); // Adjust based on how you want to identify the group
+    setSendTo(`group-${group.name}+${group.unique_id}`); // Adjust based on how you want to identify the group
     setNotifications(prevNotifications => ({
       ...prevNotifications,
       [group.name]: 0,
