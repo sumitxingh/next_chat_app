@@ -74,10 +74,6 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ socket, currentUser, params }
     }
   };
 
-  useEffect(() => {
-    fetchGroupDetails(groupId);
-    fetchUsers();
-  }, []);
 
   const onSubmit = async (data: any) => {
     if (!groupId) {
@@ -89,11 +85,12 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ socket, currentUser, params }
       const formData = new FormData();
       formData.append('name', data.name);
       formData.append('description', data.description);
+      formData.append('unique_id', groupId);
       if (image) {
         formData.append('group_pic', image);
       }
 
-      await axiosInstance.put(`/groups/${groupId}`, formData, {
+      await axiosInstance.put(`/user/operation/update-group`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -101,11 +98,16 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ socket, currentUser, params }
 
       setPopupMessage('Group updated successfully.');
       setPopupType('success');
-      reset();
     } catch (err) {
       setError('Failed to update group.');
     }
   };
+
+  useEffect(() => {
+    fetchGroupDetails(groupId);
+    fetchUsers();
+  }, []);
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

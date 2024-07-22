@@ -23,7 +23,7 @@ const GroupList: React.FC = () => {
 
   const fetchGroups = async () => {
     try {
-      const response = await axiosInstance.get('/user/operation/chat/my-groups');
+      const response = await axiosInstance.get('/user/operation/my-groups');
       setGroups(response.data.response_data.data);
     } catch (err: any) {
       setError('Failed to fetch groups.');
@@ -36,6 +36,11 @@ const GroupList: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-10 px-4">
+      <Link href={'/group/create'}>
+        <button className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-4 rounded-md">
+          Create New Group
+        </button>
+      </Link>
       <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-6">My Groups</h2>
       {error && (
         <div className="fixed top-5 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded shadow-lg bg-red-100 border border-red-400 text-red-700" role="alert">

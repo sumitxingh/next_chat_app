@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Socket } from 'socket.io-client';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage } from '@fortawesome/free-solid-svg-icons';
+import { BASE_URL } from '@/common/constants';
+import axiosInstance from '@/common/axiosInstance';
 
 interface User {
   id: number;
@@ -28,19 +28,55 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ socket, currentUser }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
-  const onSubmit = async (data: any) => {
-    if (!currentUser) {
-      setError("You need to be logged in to create a group.");
-      return;
-    }
+  // const onSubmit = async (data: any) => {
+  //   if (!currentUser) {
+  //     setError("You need to be logged in to create a group.");
+  //     return;
+  //   }
 
+  //   try {
+  //     console.log(data)
+  //     socket?.emit('create-group', data);
+  //   } catch (err) {
+  //     setError("Failed to create group.");
+  //   }
+  // };
+
+  const onSubmit = async (data: any) => {
     try {
-      console.log(data)
-      socket?.emit('create-group', data);
-    } catch (err) {
-      setError("Failed to create group.");
+      const response = await axiosInstance.post(`${BASE_URL}/user/operation/create-group`, data);
+      const group = response.data.response_data.data;
+
+      setPopupMessage("Group created successfully");
+      setPopupType("success");
+
+      // Automatically hide the pop-up message after 5 seconds
+      setTimeout(() => {
+        setPopupMessage(null);
+        setPopupType(null);
+      }, 5000);
+      reset();
+
+    } catch (error: any) {
+      console.error("Register failed:", error);
+
+      if (error.response && error.response.data) {
+        setPopupMessage(`${error.response.data.error}: ${error.response.data.message}`);
+      } else {
+        setPopupMessage("An unexpected error occurred.");
+      }
+
+      setPopupType("error");
+
+      // Automatically hide the pop-up message after 5 seconds
+      setTimeout(() => {
+        setPopupMessage(null);
+        setPopupType(null);
+      }, 5000);
     }
   };
+
+
 
   socket?.on('group-created', (group: any) => {
     setPopupMessage(`${group.name} group created successfully.`);

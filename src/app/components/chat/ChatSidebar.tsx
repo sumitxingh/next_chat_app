@@ -48,7 +48,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
 
     const fetchGroups = async () => {
       try {
-        const response = await axiosInstance.get(`/user/operation/chat/groups`);
+        const response = await axiosInstance.get(`/user/operation/groups`);
         setGroups(response.data.response_data.data); // Adjust based on API response
       } catch (error: any) {
         console.error('Error fetching groups:', error.message);
