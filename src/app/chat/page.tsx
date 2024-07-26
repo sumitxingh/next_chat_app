@@ -65,7 +65,8 @@ const Chat = () => {
       });
 
       socket.on('receive-private-message', (message: { from: string; to: string; content: string; send_on: Date }) => {
-        if (currentUser && currentUser.username === message.to && sendTo !== message.from) {
+        const conditionForSetNotification = JSON.parse(storedUser).username === message.to && (sendTo ?? 'all') !== message.from
+        if (conditionForSetNotification) {
           setNotifications(prev => ({
             ...prev,
             [message.from]: (prev[message.from] || 0) + 1, // Increment notification count
