@@ -1,15 +1,15 @@
-'use client'
+// pages/user.tsx
+'use client';
 
 import { useEffect, useState } from "react";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { BASE_URL } from "@/common/constants";
 import UserCard from "../components/card/UserCard";
 import axiosInstance from "@/common/axiosInstance";
+import SkeletonUserList from "../components/card/UserCardSekeltonLoader/SkeletonUserList";
 
 const User: React.FC = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // New state for loading
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -18,6 +18,8 @@ const User: React.FC = () => {
         setUsers(response.data.response_data.data);
       } catch (error: any) {
         setError(error.message);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
 
@@ -32,11 +34,15 @@ const User: React.FC = () => {
           <p>Error: {error}</p>
         </div>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {users.map((user: any, idx: number) => (
-          <UserCard user={user} key={idx} />
-        ))}
-      </div>
+      {loading ? (
+        <SkeletonUserList /> // Show skeleton loader while loading
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {users.map((user: any, idx: number) => (
+            <UserCard user={user} key={idx} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

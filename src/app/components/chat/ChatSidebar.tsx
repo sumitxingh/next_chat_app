@@ -3,6 +3,7 @@ import axiosInstance from "@/common/axiosInstance";
 import UserIcon from "./UserIcon";
 import { BASE_URL } from '@/common/constants';
 import { getGroupInitials } from '@/common/utils';
+import SkeletonSidebar from './ChatSkeletonLoader/SkeletonSidebar';
 
 interface ChatSidebarProps {
   connectUsers: string[];
@@ -36,6 +37,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
   const [error, setError] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [loading, setLoading] = useState(true); // New state for loading
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -56,8 +58,13 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
       }
     };
 
-    fetchGroups();
-    fetchUsers();
+    const fetchData = async () => {
+      await fetchUsers();
+      await fetchGroups();
+      setLoading(false); // Set loading to false after data is fetched
+    };
+
+    fetchData();
   }, []);
 
   const handleUserClick = (user: User) => {
@@ -79,8 +86,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
   const handlePublicChatClick = () => {
     setSendTo(null);
   };
-
-
   return (
     <div className="h-full w-64 bg-slate-200 p-4 overflow-y-auto pb-0">
       <button
@@ -93,19 +98,19 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
 
       {/* Users Section */}
       <h3 className="text-md font-semibold mb-2">Users</h3>
-      {/* <div className="overflow-y-scroll"> */}
-      <ul>
-        {users.map((user) => (
-          <UserIcon
-            key={user.id}
-            user={user}
-            isActive={connectUsers.includes(user.username)}
-            isSelected={sendTo === user.username}
-            onClick={() => handleUserClick(user)}
-            notificationCount={notifications[user.username] || 0}
-          />
-        ))}
-      </ul>
+      {loading ? <SkeletonSidebar /> :
+        <ul>
+          {users.map((user) => (
+            <UserIcon
+              key={user.id}
+              user={user}
+              isActive={connectUsers.includes(user.username)}
+              isSelected={sendTo === user.username}
+              onClick={() => handleUserClick(user)}
+              notificationCount={notifications[user.username] || 0}
+            />
+          ))}
+        </ul>}
 
       {/* Groups Section */}
       {groups.length > 0 && (
@@ -138,7 +143,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
         </>
       )}
     </div>
-    // </div>
   );
 };
 
