@@ -6,6 +6,7 @@ import axios from "axios";
 import Cookies from "js-cookie"
 import { BASE_URL } from "@/common/constants";
 import { useRouter } from "next/navigation";
+import { validatePassword, validateUsername } from "@/common/utils";
 
 
 const Login: React.FC = () => {
@@ -59,10 +60,13 @@ const Login: React.FC = () => {
             type="text"
             autoComplete="username"
             required
-            {...register("username", { required: true })}
+            {...register("username", { required: true, validate: validateUsername })}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             placeholder="Enter your username"
           />
+          {errors.username && (
+            <p className="text-sm text-red-500 mt-1">{errors.username.message?.toString()}</p>
+          )}
         </div>
 
         <div className="mt-4 relative">
@@ -76,7 +80,8 @@ const Login: React.FC = () => {
               autoComplete="password"
               required
               {...register("password", {
-                required: true
+                required: true,
+                validate: validatePassword
               })}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Enter your password"
@@ -90,7 +95,7 @@ const Login: React.FC = () => {
             </button>
           </div>
           {errors.password && (
-            <p className="text-sm text-red-300 mt-1">{errors.password.message?.toString()}</p>
+            <p className="text-sm text-red-500 mt-1">{errors.password.message?.toString()}</p>
           )}
         </div>
 

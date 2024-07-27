@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BASE_URL } from "@/common/constants";
 import axios from "axios";
+import { validatePassword, validateUsername } from "@/common/utils";
 
 const Register: React.FC = () => {
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
@@ -44,15 +45,6 @@ const Register: React.FC = () => {
       }, 5000);
     }
   };
-  const validatePassword = (value: string) => {
-    if (value.length < 8) {
-      return "Password must be at least 8 characters long";
-    }
-    if (/\s/.test(value)) {
-      return "Password should not contain spaces";
-    }
-    return true;
-  };
 
   return (
     <>
@@ -76,10 +68,13 @@ const Register: React.FC = () => {
             type="text"
             autoComplete="username"
             required
-            {...register("username", { required: true })}
+            {...register("username", { required: true, validate: validateUsername })}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             placeholder="Enter your username"
           />
+          {errors.username && (
+            <p className="text-sm text-red-500 mt-1">{errors.username.message?.toString()}</p>
+          )}
         </div>
 
         <div>
@@ -123,7 +118,7 @@ const Register: React.FC = () => {
             </button>
           </div>
           {errors.password && (
-            <p className="text-sm text-red-300 mt-1">{errors.password.message?.toString()}</p>
+            <p className="text-sm text-red-500 mt-1">{errors.password.message?.toString()}</p>
           )}
         </div>
         <div className="mt-6">
