@@ -24,7 +24,7 @@ const UserIcon: React.FC<UserItemProps> = ({ user, isActive, isSelected, onClick
       onClick={onClick}
     >
       {notificationCount > 0 && (
-        <span className="ml-auto md:order-1 bg-red-500 text-white rounded-full py-1 px-2 text-sm">
+        <span className="absolute top-0 right-0 ml-auto md:order-1 bg-red-500 text-white rounded-full py-1 px-2 text-sm">
           {notificationCount}
         </span>
       )}
