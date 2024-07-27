@@ -82,8 +82,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
 
 
   return (
-    <div className="h-screen w-64 bg-slate-200 p-4">
-      <h2 className="text-lg font-bold mb-4">Users</h2>
+    <div className="h-full w-64 bg-slate-200 p-4 overflow-y-auto pb-0">
       <button
         onClick={handlePublicChatClick}
         className={`w-full text-center py-2 bg-indigo-500 text-white rounded-md mb-4`}
@@ -94,6 +93,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
 
       {/* Users Section */}
       <h3 className="text-md font-semibold mb-2">Users</h3>
+      {/* <div className="overflow-y-scroll"> */}
       <ul>
         {users.map((user) => (
           <UserIcon
@@ -138,6 +138,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ connectUsers, sendTo, setSend
         </>
       )}
     </div>
+    // </div>
   );
 };
 

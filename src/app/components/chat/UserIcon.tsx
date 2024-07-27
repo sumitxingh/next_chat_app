@@ -20,7 +20,7 @@ interface UserItemProps {
 const UserIcon: React.FC<UserItemProps> = ({ user, isActive, isSelected, onClick, notificationCount }) => {
   return (
     <li
-      className={`py-2 px-4 cursor-pointer flex items-center md:flex-row flex-col ${isSelected ? 'bg-indigo-200' : ''} `}
+      className={`relative py-2 px-4 cursor-pointer flex items-center md:flex-row flex-col ${isSelected ? 'bg-indigo-200' : ''} `}
       onClick={onClick}
     >
       {notificationCount > 0 && (

@@ -44,7 +44,7 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="h-90vh flex items-center justify-center bg-gray-100">
       <div className="bg-slate-50 hover:bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
         <div className="flex flex-col items-center mb-4">
           {user.profile_pic ? (
