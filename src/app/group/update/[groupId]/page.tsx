@@ -26,14 +26,14 @@ interface Group {
 }
 
 interface UpdateGroupProps {
-  socket: Socket | null;
-  currentUser: User | null;
+  // socket: Socket | null;
+  // currentUser: User | null;
   params: {
     groupId: string;
   };
 }
 
-const UpdateGroup: React.FC<UpdateGroupProps> = ({ socket, currentUser, params }) => {
+const UpdateGroup: React.FC<UpdateGroupProps> = ({ params }) => {
   const groupId = params['groupId'];
   console.log(groupId);
 
