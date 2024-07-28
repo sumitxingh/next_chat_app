@@ -101,7 +101,7 @@ const Chat = () => {
   }
 
   return (
-    <div className="h-screen flex">
+    <div className="h-90vh flex">
       <title>Chat App</title>
       <ChatSidebar
         connectUsers={connectedUsers}

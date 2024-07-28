@@ -100,7 +100,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ onTyping, socket, currentUserNa
 
 
   return (
-    <div className="flex flex-col h-screen w-screen">
+    <div className="flex flex-col h-full w-screen">
       <div className="bg-indigo-300 p-4 text-lg font-bold">
         {sendTo ? `Chat with ${chatWith}` : 'Public Chat'}
       </div>
