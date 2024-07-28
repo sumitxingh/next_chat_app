@@ -65,7 +65,8 @@ const Chat = () => {
       });
 
       socket.on('receive-private-message', (message: { from: string; to: string; content: string; send_on: Date }) => {
-        if (currentUser && currentUser.username === message.to) {
+        const conditionForSetNotification = JSON.parse(storedUser).username === message.to && (sendTo ?? 'all') !== message.from
+        if (conditionForSetNotification) {
           setNotifications(prev => ({
             ...prev,
             [message.from]: (prev[message.from] || 0) + 1, // Increment notification count
@@ -100,7 +101,7 @@ const Chat = () => {
   }
 
   return (
-    <div className="h-screen flex">
+    <div className="h-90vh flex">
       <title>Chat App</title>
       <ChatSidebar
         connectUsers={connectedUsers}

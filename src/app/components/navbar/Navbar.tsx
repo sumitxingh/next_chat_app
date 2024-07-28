@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes, faHome, faLineChart, faCircleUser, faUser, faComments, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faHome, faComments, faCircleUser, faUsers, faUsers as faGroup } from '@fortawesome/free-solid-svg-icons';
 import { usePathname } from 'next/navigation';
 
 const Navbar: React.FC = () => {
@@ -68,6 +68,10 @@ const Navbar: React.FC = () => {
                       <FontAwesomeIcon icon={faUsers} className="mr-2" />
                       Users
                     </Link>
+                    <Link href="/group" className={getLinkClass('/group')}>
+                      <FontAwesomeIcon icon={faGroup} className="mr-2" />
+                      Group
+                    </Link>
                   </>
                 )}
               </div>
@@ -101,6 +105,10 @@ const Navbar: React.FC = () => {
               <Link href="/user" className={getLinkClass('/user')}>
                 <FontAwesomeIcon icon={faUsers} className="mr-2" />
                 Users
+              </Link>
+              <Link href="/group" className={getLinkClass('/group')}>
+                <FontAwesomeIcon icon={faGroup} className="mr-2" />
+                Group
               </Link>
             </>
           )}

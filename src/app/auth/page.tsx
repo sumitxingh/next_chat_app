@@ -20,7 +20,7 @@ const AuthPage: React.FC = () => {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="h-90vh flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="bg-white max-w-md w-full rounded-lg shadow-lg overflow-hidden md:max-w-xl">
         <div className="px-6 py-8">
           {isLogin ? <Login /> : <Register />}
